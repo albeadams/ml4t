@@ -1,0 +1,2 @@
+AAPL = ['AAPL']
+POPULAR = ['AAPL', 'TSLA', 'AMZN', 'AMD', 'FB', 'NFLX']

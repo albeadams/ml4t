@@ -3,8 +3,7 @@ from arctic import Arctic
 from pymongo import MongoClient
 import pandas as pd
 
-import alpha
-
+import alpha, portfolios
 
 class Mongo:
     def __init__(self):
