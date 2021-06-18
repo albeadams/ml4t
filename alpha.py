@@ -6,7 +6,7 @@ from paper_config import *
 url = requests.get('https://www.alphavantage.co/documentation/')
 soup = BeautifulSoup(url.text, 'html.parser')
 
-toc = ['time-series-data', 'fundamentals', 'fx', 'digital-currenct', 'technical-indicators']
+toc = ['time-series-data', 'fundamentals', 'fx', 'digital-currency', 'technical-indicators']
 
 def get_toc(category='technical-indicators'):
     a = soup.find_all('a', href=True)
