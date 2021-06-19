@@ -12,4 +12,6 @@ def SP500():
     for link in links:
         if 'sec' not in link['href']:
             names.append(link.text)
+            if link.text == 'ZTS':
+                break
     return names
