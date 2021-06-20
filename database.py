@@ -40,7 +40,7 @@ class DataStore:
             return
         self.store.initialize_library(library_name)
         
-    def write(self, name=None, df=None, metadata=None):
+    def write_indicator(self, name=None, df=None, metadata=None):
         if name is None or df is None:
             print('supply name and/or dataframe')
             return
@@ -48,6 +48,16 @@ class DataStore:
         for key, value in metadata.items():
             if '.' not in key:
                 final_md[key] = value
+        self.library.write(name, df, final_md)
+        
+    def write_value(self, name=None, df=None, metadata=None):
+        if name is None or df is None:
+            print('supply name and/or dataframe')
+            return
+        final_md = {}
+        for key, value in metadata.items():
+            k = key.replace('.', ':')
+            final_md[k] = value
         self.library.write(name, df, final_md)
         
     def delete(self, name=None):
@@ -67,7 +77,7 @@ class DataStore:
         item = self.library.read(symbol)
         return item.data, item.metadata
     
-    def add(self, stock, indicator, interval):
+    def add_indicator(self, stock, indicator, interval):
         combo = stock + '_' + indicator + '_' + interval
         instore = self.get_symbols()
         if combo not in instore and combo not in self.nodata:
@@ -84,24 +94,49 @@ class DataStore:
                     md = data['Meta Data']
                 except:
                     md = ''
-
                 data = data[ta_name]
-                self.write(name=combo, df=data, metadata=md)
+                self.write_indicator(name=combo, df=data, metadata=md)
                 print(f'added {combo}')
-
             else:
                 print(f'{combo} has no data')
                 self.no_data(combo)
         return 1
     
-    def update_symbol(self, stock, indicator, interval):
+    
+    def add_value(self, stock):
+        combo = stock + '_VAL'
+        instore = self.get_symbols()
+        if combo not in instore and combo not in self.nodata:
+            data = alpha.time_series_values(symbol=stock)
+            for key, value in data.items():
+                if key == 'Note':
+                    print('exceeded limit')
+                    return -1
+            if data:
+                ta_name =''
+                for key, value in data.items():
+                    ta_name = key
+                try:
+                    md = data['Meta Data']
+                except:
+                    md = ''
+                data = data[ta_name]
+                self.write_value(name=combo, df=data, metadata=md)
+                print(f'added {combo}')
+            else:
+                print(f'{combo} has no data')
+                self.no_data(combo)
+        return 1
+                
+    
+    def update_indicator_symbol(self, stock, indicator, interval):
         self.delete(stock + '_' + indicator + '_' + interval)
         status = self.add(stock, indicator, interval)
         if status == -1:
             time.sleep(60)
-            self.update_symbol(stock, indicator, interval)
+            self.update_indicator_symbol(stock, indicator, interval)
 
-    def update(self, sym='all', indicator='all', interval='daily'):
+    def update_indicator(self, sym='all', indicator='all', interval='daily'):
         stores = self.get_symbols()
         updates = 0
         for store in stores:
@@ -128,15 +163,15 @@ class DataStore:
             s = store[:store.find('_')]
             if sym == 'all' and indicator == 'all':
                 if intr == interval:
-                    self.update_symbol(s, ind, intr)
+                    self.update_indicator_symbol(s, ind, intr)
             elif sym == 'all':
                 if ind == indicator and intr == interval:
-                    self.update_symbol(s, ind, intr)
+                    self.update_indicator_symbol(s, ind, intr)
             elif indicator == 'all':
                 if s == sym and intr == interval:
-                    self.update_symbol(s, ind, intr)
+                    self.update_indicator_symbol(s, ind, intr)
             elif s == sym and intr == interval and ind == indicator:
-                self.update_symbol(s, ind, intr)
+                self.update_indicator_symbol(s, ind, intr)
         
     def get_symbols(self):
         return self.library.list_symbols()
@@ -148,24 +183,38 @@ class DataStore:
         for sym in self.get_symbols():
             self.delete(sym)
             
-    def list_symbols(self, sym='all', indicator='all', interval='daily'):
+    def list_indicator_symbols(self, sym='all', indicator='all', interval='daily'):
         stores = self.get_symbols()
         fin_store = []
         for store in stores:
-            intr = store[store.find('_', store.find('_')+1)+1:]
-            ind = store[store.find('_')+1:store.find('_', store.find('_')+1)]
-            s = store[:store.find('_')]
-            if sym == 'all' and indicator == 'all':
-                if intr == interval:
-                    fin_store.append(store)
-            elif sym == 'all':
-                if ind == indicator and intr == interval:
-                    fin_store.append(store)
-            elif indicator == 'all':
-                if s == sym and intr == interval:
-                    fin_store.append(store)
-            else:
-                if s == sym and intr == interval and ind == indicator:
-                    fin_store.append(store)
+            if '_VAL' not in store:
+                intr = store[store.find('_', store.find('_')+1)+1:]
+                ind = store[store.find('_')+1:store.find('_', store.find('_')+1)]
+                s = store[:store.find('_')]
+                if sym == 'all' and indicator == 'all':
+                    if intr == interval:
+                        fin_store.append(store)
+                elif sym == 'all':
+                    if ind == indicator and intr == interval:
+                        fin_store.append(store)
+                elif indicator == 'all':
+                    if s == sym and intr == interval:
+                        fin_store.append(store)
+                else:
+                    if s == sym and intr == interval and ind == indicator:
+                        fin_store.append(store)
 
         return fin_store
+    
+    def list_value_symbols(self, sym='all'):
+        stores = self.get_symbols()
+        fin_store = []
+        for store in stores:
+            if '_VAL' in store:
+                check = sym + '_VAL'
+                if sym == 'all':
+                    fin_store.append(store)
+                elif check == store:
+                    fin_store.append(store)
+        return fin_store
+        

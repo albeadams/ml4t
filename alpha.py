@@ -26,3 +26,13 @@ def technical_indicator(type='SMA',
     r = requests.get(url)
     data = r.json()
     return data
+
+
+def time_series_values(function='TIME_SERIES_DAILY_ADJUSTED',
+                        symbol='AAPL',
+                       outputsize='full'):
+    query = 'https://www.alphavantage.co/query'
+    url = f'{query}?function={function}&symbol={symbol}&outputsize={outputsize}&apikey=ALPHA_VANTAGE_KEY'
+    r = requests.get(url)
+    data = r.json()
+    return data
