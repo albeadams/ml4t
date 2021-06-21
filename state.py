@@ -38,6 +38,8 @@ class State(object):
         df = pd.DataFrame(values, columns = ['Date',value])
         df['Date'] = pd.to_datetime(df['Date'])
         df.set_index('Date', inplace=True)
+        df = df.sort_index()
+        self.prices = df
 
         # add alpha values
         symbols = []
@@ -50,9 +52,20 @@ class State(object):
 
         for symbol in symbols:
             x = DataStore.read(symbol)
-            df2 = pd.DataFrame.from_dict(x[0], orient='index')
+            df2 = pd.DataFrame.from_dict(x[0], orient='index').astype(float)
             df = df.merge(df2, how='inner', left_index=True, right_index=True)
-        self.df = df.fillna(method='ffill')
+
+        df = df.fillna(method='ffill')
+        df = df.sort_index()
+        df1 = df.iloc[:,0].to_frame() # note: joining of dataframes not currently used
+        del df1
+        df2 = df.iloc[:, 1:]/df.iloc[0,1:]
+
+        self.indicators = df2
+        
+        print('Available to use:\n  <classname>.prices\n  <classname>.indicators')
+        
+        
     
     def build_multiple_state(self,portfolio=AAPL):
         print('ToDo - add value')
@@ -78,3 +91,7 @@ class State(object):
             df = df.fillna(method='ffill')
             stocks.append(df)
         return stocks
+    
+    @staticmethod
+    def normalize_indicators(df):
+        return df.iloc[:,1:]/df.iloc[0,1:]

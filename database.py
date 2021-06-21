@@ -28,11 +28,8 @@ class DataStore:
         self.store = Arctic('localhost')
         self.exceeded_limit = 'Our standard API call frequency is 5 calls per minute and 500 calls per day'
         self.nodata = []
-        try:
-            self.library = self.store[name]
-        except:
-            self.create_library(name)
-            self.library = self.store[name]
+        self.library = self.store[name]
+
         
     def create_library(self, library_name=None):
         if library_name is None:
@@ -179,7 +176,7 @@ class DataStore:
     def no_data(self, symbol):
         self.nodata.append(symbol)
 
-    def deleta_all(self):
+    def delete_all(self):
         for sym in self.get_symbols():
             self.delete(sym)
             
