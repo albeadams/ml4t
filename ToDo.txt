@@ -1,2 +1,12 @@
 
 How to know which stocks to trade? AAPL or...?
+
+Other Indicators:
+	Money supply growth (M2?...)
+	Fed purchases
+	Bank info ? Liquidity?
+	Real estate (and other alternative investments)
+	Sentiment Analysis - Twitter, old news articles
+	Mentions in general (not sentiment, but just talk)
+		- not only of company, but of products
+		- competitor products?

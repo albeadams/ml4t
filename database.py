@@ -22,15 +22,14 @@ class Mongo:
                  for db in self.client.list_database_names())
         print(json.dumps(d))
         
+        
 class DataStore:
     def __init__(self, name='NASDAQ'):
-        #mg = Mongo()
         self.store = Arctic('localhost')
         self.exceeded_limit = 'Our standard API call frequency is 5 calls per minute and 500 calls per day'
         self.nodata = []
         self.library = self.store[name]
 
-        
     def create_library(self, library_name=None):
         if library_name is None:
             print('supply a library name')
@@ -99,7 +98,6 @@ class DataStore:
                 self.no_data(combo)
         return 1
     
-    
     def add_value(self, stock):
         combo = stock + '_VAL'
         instore = self.get_symbols()
@@ -125,7 +123,6 @@ class DataStore:
                 self.no_data(combo)
         return 1
                 
-    
     def update_indicator_symbol(self, stock, indicator, interval):
         self.delete(stock + '_' + indicator + '_' + interval)
         status = self.add(stock, indicator, interval)
@@ -200,7 +197,6 @@ class DataStore:
                 else:
                     if s == sym and intr == interval and ind == indicator:
                         fin_store.append(store)
-
         return fin_store
     
     def list_value_symbols(self, sym='all'):
@@ -214,4 +210,3 @@ class DataStore:
                 elif check == store:
                     fin_store.append(store)
         return fin_store
-        
