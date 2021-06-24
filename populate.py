@@ -3,10 +3,7 @@ import time
 import alpha
 from portfolios import *
 
-def populate_popular_stocks_high_usage_alphas(DataStore=None, interval='daily'):
-    if DataStore == None:
-        print('supply DataStore')
-        return
+def populate_popular_stocks_high_usage_alphas(DataStore, interval='daily'):
     toc = alpha.get_toc()
     high_indicators = []
     for indicator in toc:
@@ -26,11 +23,7 @@ def populate_popular_stocks_high_usage_alphas(DataStore=None, interval='daily'):
         populate_popular_stocks_high_usage_alphas(DataStore, interval)
         
 
-def populate_popular_stocks_values(DataStore=None):
-    if DataStore == None:
-        print('supply DataStore')
-        return
-    
+def populate_popular_stocks_values(DataStore):
     status = 1
     for stock in POPULAR:
         status = DataStore.add_value(stock)

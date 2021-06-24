@@ -3,9 +3,7 @@ import pandas as pd
 from portfolios import *
 
 class History(object):
-    def __init__(self, DataStore=None, symbol=None, value='adjusted close', indicators='all'):
-        assert DataStore is not None, "supply a DataStore"
-        assert symbol is not None, "specify a symbol"
+    def __init__(self, DataStore, symbol, dates=None, value='adjusted close', indicators='all'):
         assert (indicators != 'all' and isinstance(indicators, list)), "supply indicators as list"
         self.symbol = symbol
         self.value = value
@@ -57,9 +55,10 @@ class History(object):
 
         self.indicators = df2
         
-        print('Available to use:\n  <classname>.prices\n  <classname>.indicators')
+        if dates is not None:
+            mask = (self.prices.index > dates[0]) & (self.prices.index <= dates[1])
+            self.prices = self.prices.loc[mask]
+            mask = (self.indicators.index > dates[0]) & (self.indicators.index <= dates[1])
+            self.indicators = self.indicators.loc[mask]
         
-    
-    @staticmethod
-    def normalize_indicators(df):
-        return df.iloc[:,1:]/df.iloc[0,1:]
+        #print('Available to use:\n  <classname>.prices\n  <classname>.indicators')

@@ -30,46 +30,34 @@ class DataStore:
         self.nodata = []
         self.library = self.store[name]
 
-    def create_library(self, library_name=None):
-        if library_name is None:
-            print('supply a library name')
-            return
+    def create_library(self, library_name):
         self.store.initialize_library(library_name)
         
-    def write_indicator(self, name=None, df=None, metadata=None):
-        if name is None or df is None:
-            print('supply name and/or dataframe')
-            return
+    def write_indicator(self, name, df, metadata=None):
         final_md = {}
-        for key, value in metadata.items():
-            if '.' not in key:
-                final_md[key] = value
+        if metadata is not None:
+            for key, value in metadata.items():
+                if '.' not in key:
+                    final_md[key] = value
         self.library.write(name, df, final_md)
         
-    def write_value(self, name=None, df=None, metadata=None):
-        if name is None or df is None:
-            print('supply name and/or dataframe')
-            return
+    def write_value(self, name, df, metadata=None):
         final_md = {}
-        for key, value in metadata.items():
-            k = key.replace('.', ':')
-            final_md[k] = value
+        if metadata is not None:
+            for key, value in metadata.items():
+                k = key.replace('.', ':')
+                final_md[k] = value
         self.library.write(name, df, final_md)
         
-    def delete(self, name=None):
+    def delete(self, name):
         # function not working - delete is not deleting library
-        if name is None:
-            print('supply a name to delete')
         self.library.delete(name)
         print(f'{name} deleted')
         
     def list(self):
         return self.store.list_libraries()
     
-    def read(self, symbol=None):
-        if symbol is None:
-            print('supply a library symbol')
-            return
+    def read(self, symbol):
         item = self.library.read(symbol)
         return item.data, item.metadata
     
