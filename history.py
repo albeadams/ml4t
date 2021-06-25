@@ -4,7 +4,7 @@ from portfolios import *
 
 class History(object):
     def __init__(self, DataStore, symbol, dates=None, value='adjusted close', indicators='all'):
-        assert (indicators != 'all' and isinstance(indicators, list)), "supply indicators as list"
+        assert indicators == 'all' or (indicators != 'all' and isinstance(indicators, list)), "supply indicators as list"
         self.symbol = symbol
         self.value = value
         self.indicators = indicators
