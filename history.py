@@ -55,6 +55,18 @@ class History(object):
 
         self.indicators = df2
         
+        lastdate = min(self.prices.index[-1], self.indicators.index[-1])
+        mask = (self.prices.index <= lastdate)
+        self.prices = self.prices.loc[mask]
+        mask = (self.indicators.index <= lastdate)
+        self.indicators = self.indicators.loc[mask]
+        
+        earlydate = max(self.prices.index[0], self.indicators.index[0])
+        mask = (self.prices.index >= earlydate)
+        self.prices = self.prices.loc[mask]
+        mask = (self.indicators.index >= earlydate)
+        self.indicators = self.indicators.loc[mask]
+        
         if dates is not None:
             mask = (self.prices.index > dates[0]) & (self.prices.index <= dates[1])
             self.prices = self.prices.loc[mask]
