@@ -87,6 +87,7 @@ class DataStore:
         return 1
     
     def add_value(self, stock):
+        """Note: this is only Daily - uses default daily"""
         combo = stock + '_VAL'
         instore = self.get_symbols()
         if combo not in instore and combo not in self.nodata:

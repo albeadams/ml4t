@@ -31,7 +31,7 @@ class History(object):
         df['Date'] = pd.to_datetime(df['Date'])
         df.set_index('Date', inplace=True)
         df = df.sort_index()
-        self.prices = df
+        self.prices = df.astype(float)
 
         # add alpha values
         symbols = []
