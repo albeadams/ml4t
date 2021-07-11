@@ -22,13 +22,22 @@ class Mongo:
                  for db in self.client.list_database_names())
         print(json.dumps(d))
         
+    def get_arctic_size(self):
+        db = self.client.arctic
+        stats = db.command("dbstats")
+        print(f'{round(stats["dataSize"]/1000000, 2)} MB')
+        
         
 class DataStore:
     def __init__(self, name='NASDAQ'):
         self.store = Arctic('localhost')
         self.exceeded_limit = 'Our standard API call frequency is 5 calls per minute and 500 calls per day'
         self.nodata = []
-        self.library = self.store[name]
+        try:
+            self.library = self.store[name]
+        except:
+            self.store.initialize_library('NASDAQ')
+            self.library = self.store[name]
 
     def create_library(self, library_name):
         self.store.initialize_library(library_name)

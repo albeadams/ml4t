@@ -1,4 +1,11 @@
 
+-- start mongodb
+sudo systemctl start mongod
+
+-- stop mongodb
+sudo systemctl stop mongod
+
+
 How to know which stocks to trade? AAPL or...?
 
 Other Indicators:
