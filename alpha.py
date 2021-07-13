@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-from paper_config import *
+from api import *
 
 url = requests.get('https://www.alphavantage.co/documentation/')
 soup = BeautifulSoup(url.text, 'html.parser')

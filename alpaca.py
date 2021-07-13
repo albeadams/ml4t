@@ -1,12 +1,13 @@
 import requests, json
 
-from paper_config import *
+from api import *
 
 def get_account():
     r = requests.get(ALPACA_ACCOUNT_URL, headers=HEADERS)
     return json.loads(r.content)
 
-def create_order(symbol, qty, side, type, time_in_force):
+def create_order(symbol, qty, side, type='market', time_in_force='day'):
+    #https://alpaca.markets/docs/api-documentation/api-v2/orders/
     data = {
         'symbol': symbol,
         'qty': qty,
@@ -14,11 +15,11 @@ def create_order(symbol, qty, side, type, time_in_force):
         'type': type,
         'time_in_force': time_in_force
     }
-    r = request.post(ORDERS_URL, json=data, headers=HEADERS)
+    r = request.post(ALPACA_ORDERS_URL, json=data, headers=HEADERS)
     return json.loads(r.content)
     
 def get_orders():
-    r = requests.get(ORDERS_URL, headers=HEADERS)
+    r = requests.get(ALPACA_ORDERS_URL, headers=HEADERS)
     return json.loads(r.content)
 
 def get_positions():
