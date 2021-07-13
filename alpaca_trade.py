@@ -33,3 +33,10 @@ def get_position(sym=None):
 def get_assets():
     r = requests.get(ALPACA_ASSETS_URL, headers=HEADERS)
     return json.loads(r.content)
+
+def get_price(sym):
+    """get latest price for a symbol"""
+    #v2/stocks/{symbol}/trades/latest
+    r = requests.get(f'{ALPACA_LATEST_VALUE_URL}/{sym}/trades/latest', headers=HEADERS)
+    print(r)
+    return json.loads(r.content)
