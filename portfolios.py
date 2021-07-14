@@ -64,13 +64,8 @@ class Portfolio:
                                 qty=amount, 
                                 side='sell')
         else:
-            if amount > self.position_amount[sym]:
-                amount = self.position_amount[sym] # sell off all position
             profit = current_price * amount
             self.position_amount[sym] -= amount
-            if self.position_amount[sym] <= 0: # no more position in symbol
-                self.positions.remove(sym)
-                self.position_amount.pop(sym)
             self.cash_remaining += profit
             
     def save(self):
