@@ -131,8 +131,8 @@ class TD3(object):
 
 
     def select_action(self, state):
-        state = torch.FloatTensor(state.reshape(1, -1)).to(self.device)
-        return self.actor(state).cpu().data.numpy().flatten()
+        state = torch.tensor(state.reshape(1, -1)).to(self.device)
+        return self.actor(state.float()).cpu().data.numpy().flatten()
 
 
     def train(self, replay_buffer, batch_size=256):
