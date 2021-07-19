@@ -4,40 +4,79 @@ import torch.nn.functional as F
 import numpy as np
 import copy
 
-class ReplayBuffer:
-    def __init__(self, state_dim, action_dim, max_buffer=int(1e6), batch_size=64):
-        # create state, action, next_state, reward, done tables
-        # state_dim is total # indicators or # values?; action is # actions
-        self.state = np.empty((max_buffer, state_dim))
-        self.action = np.empty((max_buffer, action_dim))
-        self.next_state = np.empty((max_buffer, state_dim))
-        self.reward = np.empty((max_buffer, 1))
-        self.done = np.empty((max_buffer, 1))
+# class ReplayBuffer:
+#     def __init__(self, state_dim, action_dim, max_buffer=int(1e6), batch_size=64):
+#         # create state, action, next_state, reward, done tables
+#         # state_dim is total # indicators or # values?; action is # actions
+#         self.state = np.empty((max_buffer, state_dim))
+#         self.action = np.empty((max_buffer, action_dim))
+#         self.next_state = np.empty((max_buffer, state_dim))
+#         self.reward = np.empty((max_buffer, 1))
+#         self.done = np.empty((max_buffer, 1))
         
+#         self.max_size = max_buffer
+#         self.batch_size = batch_size
+#         self.size = 0
+#         self.current_memory = 0
+#         self._idx = 0
+        
+#     def update(self, experience):
+#         state, action, next_state, reward, done = experience
+#         self.state[self._idx] = state
+#         self.action[self._idx] = action
+#         self.next_state[self._idx] = next_state
+#         self.reward[self._idx] = reward
+#         self.done[self._idx] = done
+#         self._idx = (self._idx + 1) % self.max_size
+#         self.size = min(self.size + 1, self.max_size)
+        
+#     def sample(self):
+#         idxs = np.random.choice(self.size, self.batch_size, replace=False)
+#         batch = np.vstack(self.state[idxs]), \
+#                 np.vstack(self.action[idxs]), \
+#                 np.vstack(self.next_state[idxs]), \
+#                 np.vstack(self.reward[idxs]), \
+#                 np.vstack(self.done[idxs])
+#         return batch
+    
+class ReplayBuffer(object):
+    def __init__(self, state_dim, action_dim, max_buffer=int(1e6), batch_size=64):
         self.max_size = max_buffer
         self.batch_size = batch_size
+        self.ptr = 0
         self.size = 0
-        self.current_memory = 0
-        self._idx = 0
-        
+
+        self.state = np.zeros((max_buffer, state_dim))
+        self.action = np.zeros((max_buffer, action_dim))
+        self.next_state = np.zeros((max_buffer, state_dim))
+        self.reward = np.zeros((max_buffer, 1))
+        self.not_done = np.zeros((max_buffer, 1))
+
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
     def update(self, experience):
         state, action, next_state, reward, done = experience
-        self.state[self._idx] = state
-        self.action[self._idx] = action
-        self.next_state[self._idx] = next_state
-        self.reward[self._idx] = reward
-        self.done[self._idx] = done
-        self._idx = (self._idx + 1) % self.max_size
+        self.state[self.ptr] = state
+        self.action[self.ptr] = action
+        self.next_state[self.ptr] = next_state
+        self.reward[self.ptr] = reward
+        self.not_done[self.ptr] = 1. - done
+
+        self.ptr = (self.ptr + 1) % self.max_size
         self.size = min(self.size + 1, self.max_size)
-        
+
+
     def sample(self):
-        idxs = np.random.choice(self.size, self.batch_size, replace=False)
-        batch = np.vstack(self.state[idxs]), \
-                np.vstack(self.action[idxs]), \
-                np.vstack(self.next_state[idxs]), \
-                np.vstack(self.reward[idxs]), \
-                np.vstack(self.done[idxs])
-        return batch
+        ind = np.random.randint(0, self.size, size=self.batch_size)
+
+        return (
+            torch.FloatTensor(self.state[ind]).to(self.device),
+            torch.FloatTensor(self.action[ind]).to(self.device),
+            torch.FloatTensor(self.next_state[ind]).to(self.device),
+            torch.FloatTensor(self.reward[ind]).to(self.device),
+            torch.FloatTensor(self.not_done[ind]).to(self.device)
+        )
 
 # Implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3)
 # Paper: https://arxiv.org/abs/1802.09477
