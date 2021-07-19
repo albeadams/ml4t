@@ -143,8 +143,8 @@ class TD3(object):
         state = torch.tensor(state).float()
         action = torch.tensor(action).float()
         next_state = torch.tensor(next_state).float()
-        reward = torch.tensor(reward)
-        not_done = torch.tensor(not_done)
+        reward = torch.tensor(reward).float()
+        not_done = torch.tensor(not_done).float()
 
         with torch.no_grad():
             # Select action according to policy and add clipped noise
@@ -168,6 +168,7 @@ class TD3(object):
 
         # Compute critic loss
         critic_loss = F.mse_loss(current_Q1, target_Q) + F.mse_loss(current_Q2, target_Q)
+        #critic_loss = critic_loss.double()
 
         # Optimize the critic
         self.critic_optimizer.zero_grad()
