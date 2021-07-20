@@ -22,10 +22,12 @@ class Portfolio:
         self.use_alpaca = use_alpaca
         if use_alpaca:
             self.cash_remaining = int(alpaca.get_account()['cash'])
+            self.start_value = self.cash_remaining
             self.positions = alpaca.get_positions() # check on how returned from alpaca...?????????
             self.position_amount = 0 # ????
         else:
             self.cash_remaining = cash
+            self.start_value = cash
             self.positions = []
             self.position_amount = dict()
         print(f'Portfolio created - available cash: {self.cash_remaining}')
