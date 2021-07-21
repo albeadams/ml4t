@@ -3,41 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import copy
-
-# class ReplayBuffer:
-#     def __init__(self, state_dim, action_dim, max_buffer=int(1e6), batch_size=64):
-#         # create state, action, next_state, reward, done tables
-#         # state_dim is total # indicators or # values?; action is # actions
-#         self.state = np.empty((max_buffer, state_dim))
-#         self.action = np.empty((max_buffer, action_dim))
-#         self.next_state = np.empty((max_buffer, state_dim))
-#         self.reward = np.empty((max_buffer, 1))
-#         self.done = np.empty((max_buffer, 1))
-        
-#         self.max_size = max_buffer
-#         self.batch_size = batch_size
-#         self.size = 0
-#         self.current_memory = 0
-#         self._idx = 0
-        
-#     def update(self, experience):
-#         state, action, next_state, reward, done = experience
-#         self.state[self._idx] = state
-#         self.action[self._idx] = action
-#         self.next_state[self._idx] = next_state
-#         self.reward[self._idx] = reward
-#         self.done[self._idx] = done
-#         self._idx = (self._idx + 1) % self.max_size
-#         self.size = min(self.size + 1, self.max_size)
-        
-#     def sample(self):
-#         idxs = np.random.choice(self.size, self.batch_size, replace=False)
-#         batch = np.vstack(self.state[idxs]), \
-#                 np.vstack(self.action[idxs]), \
-#                 np.vstack(self.next_state[idxs]), \
-#                 np.vstack(self.reward[idxs]), \
-#                 np.vstack(self.done[idxs])
-#         return batch
     
 class ReplayBuffer(object):
     def __init__(self, state_dim, action_dim, max_buffer=int(1e6), batch_size=64):
