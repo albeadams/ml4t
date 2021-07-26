@@ -51,9 +51,13 @@ class History(object):
         df = df.sort_index()
         df1 = df.iloc[:,0].to_frame() # note: joining of dataframes not currently used
         del df1
+        
+        #normalizing
         df2 = df.iloc[:, 1:]/df.iloc[0,1:]
-
         self.indicators = df2
+        
+        #not normalizing
+        self.indicators = df
         
         lastdate = min(self.prices.index[-1], self.indicators.index[-1])
         mask = (self.prices.index <= lastdate)

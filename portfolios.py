@@ -30,7 +30,7 @@ class Portfolio:
             self.start_value = cash
             self.positions = []
             self.position_amount = dict()
-        print(f'Portfolio created - available cash: {self.cash_remaining}')
+        #print(f'Portfolio created - available cash: {self.cash_remaining}')
         
     def has_position(self, sym):
         # check logic - need amount as well
