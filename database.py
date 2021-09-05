@@ -2,6 +2,7 @@ import json
 from arctic import Arctic
 from pymongo import MongoClient
 import pandas as pd
+import time
 
 import alpha, portfolios
 
@@ -123,7 +124,7 @@ class DataStore:
                 
     def update_indicator_symbol(self, stock, indicator, interval):
         self.delete(stock + '_' + indicator + '_' + interval)
-        status = self.add(stock, indicator, interval)
+        status = self.add_indicator(stock, indicator, interval)
         if status == -1:
             time.sleep(60)
             self.update_indicator_symbol(stock, indicator, interval)
