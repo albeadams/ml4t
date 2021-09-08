@@ -59,6 +59,9 @@ class History(object):
         #not normalizing
         self.indicators = df
         
+        self.indicators.rename(columns={'adjusted close': 'Adj Close'}, inplace=True)
+        self.indicators = self.indicators[[col for col in self.indicators if col not in ['Adj Close']] + ['Adj Close']]
+        
         lastdate = min(self.prices.index[-1], self.indicators.index[-1])
         mask = (self.prices.index <= lastdate)
         self.prices = self.prices.loc[mask]
